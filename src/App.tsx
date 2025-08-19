@@ -6,6 +6,8 @@ import { CustomerProvider } from './context/CustomerContext'
 import { LoginForm } from './components/auth/LoginForm'
 import { DashboardPage } from './pages/DashboardPage'
 import { CustomersPage } from './pages/CustomersPage'
+import { PricingPage } from './pages/PricingPage'
+import { BillboardsPage } from './pages/BillboardsPage'
 import { Button } from './components/ui/button'
 import { 
   Home, 
@@ -18,7 +20,15 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  Monitor,
+  DollarSign,
+  Wrench,
+  Printer,
+  CheckSquare,
+  FileImage,
+  Plus,
+  BarChart
 } from 'lucide-react'
 
 // Main App Component with Navigation
@@ -32,18 +42,54 @@ function AppContent() {
   }
 
   const sidebarItems = [
-    { id: 'dashboard', label: 'الرئيسية', icon: Home, section: 'main' },
-    { id: 'customers', label: 'العملاء', icon: Users, section: 'main' },
-    { id: 'billboards', label: 'اللوحات', icon: MapPin, section: 'main' },
-    { id: 'bookings', label: 'الحجوزات', icon: Calendar, section: 'main' },
-    { id: 'contracts', label: 'العقود', icon: FileText, section: 'main' },
-    { id: 'invoices', label: 'الفواتير', icon: CreditCard, section: 'main' },
-    { id: 'reports', label: 'التقارير', icon: BarChart3, section: 'main' },
-    { id: 'settings', label: 'الإعدادات', icon: Settings, section: 'main' },
+    // Dashboard Section
+    { id: "dashboard", label: "الرئيسية", icon: Home, section: "dashboard" },
+
+    // Billboards Management Section
+    { id: "billboards", label: "إدارة اللوحات", icon: Monitor, section: "billboards" },
+    { id: "map", label: "الخريطة", icon: MapPin, section: "billboards" },
+
+    // Clients Section
+    { id: "customers", label: "العملاء", icon: Users, section: "clients" },
+    { id: "client-accounts", label: "حسابات العملاء", icon: CreditCard, section: "clients" },
+
+    // Prices Section
+    { id: "pricing", label: "الأسعار", icon: BarChart3, section: "pricing" },
+
+    // Contracts & Invoices Section
+    { id: "contracts", label: "العقود", icon: FileText, section: "contracts" },
+    { id: "invoices", label: "الفواتير", icon: DollarSign, section: "contracts" },
+
+    // Installation & Printing Section
+    { id: "installation-teams", label: "فرق التركيب", icon: Wrench, section: "installation" },
+    { id: "printing-houses", label: "المطابع", icon: Printer, section: "installation" },
+
+    // Tasks Section
+    { id: "installation-tasks", label: "مهام التركيب", icon: CheckSquare, section: "tasks" },
+    { id: "printing-tasks", label: "مهام الطباعة", icon: FileImage, section: "tasks" },
+
+    // Bookings Section
+    { id: "advanced-booking", label: "حجز جديد", icon: Plus, section: "bookings" },
+    { id: "bookings", label: "الحجوزات", icon: Calendar, section: "bookings" },
+
+    // Reports Section
+    { id: "reports", label: "التقارير", icon: BarChart, section: "reports" },
+
+    // Settings Section
+    { id: "users", label: "المستخدمين", icon: Settings, section: "settings" },
   ]
 
   const sectionHeaders = {
-    main: 'القائمة الرئيسية'
+    dashboard: "لوحة التحكم",
+    billboards: "إدارة اللوحات",
+    clients: "العملاء",
+    pricing: "التسعير",
+    contracts: "العقود والفواتير",
+    installation: "التركيب والطباعة",
+    tasks: "المهام",
+    bookings: "الحجوزات",
+    reports: "التقارير",
+    settings: "الإعدادات",
   }
 
   const handleLogout = () => {
@@ -154,12 +200,155 @@ function AppContent() {
         <main className="flex-1 overflow-auto p-6">
           {activeTab === 'dashboard' && <DashboardPage />}
           {activeTab === 'customers' && <CustomersPage />}
-          {activeTab === 'billboards' && <div className="text-center py-12 text-gray-500">صفحة اللوحات قيد التطوير</div>}
-          {activeTab === 'bookings' && <div className="text-center py-12 text-gray-500">صفحة الحجوزات قيد التطوير</div>}
-          {activeTab === 'contracts' && <div className="text-center py-12 text-gray-500">صفحة العقود قيد التطوير</div>}
-          {activeTab === 'invoices' && <div className="text-center py-12 text-gray-500">صفحة الفواتير قيد التطوير</div>}
-          {activeTab === 'reports' && <div className="text-center py-12 text-gray-500">صفحة التقارير قيد التطوير</div>}
-          {activeTab === 'settings' && <div className="text-center py-12 text-gray-500">صفحة الإعدادات قيد التطوير</div>}
+          
+          {/* Billboards Management */}
+          {activeTab === 'billboards' && <BillboardsPage />}
+          
+          {activeTab === 'map' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  خريطة اللوحات
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">عرض مواقع اللوحات الإعلانية على الخريطة</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة الخريطة قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'client-accounts' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  حسابات العملاء
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">إدارة الحسابات المالية للعملاء</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة حسابات العملاء قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'pricing' && <PricingPage />}
+
+          {activeTab === 'contracts' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  إدارة العقود
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">إنشاء ومتابعة عقود الإعلان</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة العقود قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'invoices' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  إدارة الفواتير
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">إنشاء ومتابعة الفواتير والمدفوعات</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة الفواتير قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'installation-teams' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  فرق التركيب
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">إدارة فرق تركيب اللوحات الإعلانية</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة فرق التركيب قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'printing-houses' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  المطابع
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">إدارة المطابع وأوامر الطباعة</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة المطابع قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'installation-tasks' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  مهام التركيب
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">متابعة مهام تركيب اللوحات</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة مهام التركيب قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'printing-tasks' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  مهام الطباعة
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">متابعة مهام طباعة الإعلانات</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة مهام الطباعة قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'advanced-booking' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  حجز جديد
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">إنشاء حجز جديد للوحات الإعلانية</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة الحجز الجديد قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'bookings' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  إدارة الحجوزات
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">عرض ومتابعة جميع الحجوزات</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة الحجوزات قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'reports' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  التقارير والإحصائيات
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">تقارير شاملة عن الأداء والإيرادات</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة التقارير قيد التطوير</div>
+            </div>
+          )}
+
+          {activeTab === 'users' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
+                  إدارة المستخدمين
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 text-lg">إدارة مستخدمي النظام والصلاحيات</p>
+              </div>
+              <div className="text-center py-12 text-gray-500">صفحة المستخدمين قيد التطوير</div>
+            </div>
+          )}
         </main>
       </div>
     </div>
