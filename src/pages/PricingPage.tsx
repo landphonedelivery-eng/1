@@ -175,127 +175,279 @@ export const PricingPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-            إدارة الأسعار
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">تحديد أسعار اللوحات حسب الحجم والموقع وفئة العميل</p>
-        </div>
-        <div className="flex gap-3">
-          <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-            <Plus className="w-4 h-4 ml-2" />
-            إضافة مستوى سعر
-          </Button>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-6 border border-yellow-500/20">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+              الأسعار
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">إدارة شاملة للوحات الإعلانية</p>
+          </div>
+          <div className="flex gap-3">
+            <Button className="bg-green-600 hover:bg-green-700 text-white">
+              <Plus className="w-4 h-4 ml-2" />
+              إضافة مقياس
+            </Button>
+            <Button variant="outline" className="border-yellow-600 text-yellow-600 hover:bg-yellow-50">
+              شهر واحد
+            </Button>
+            <Button variant="outline" className="border-yellow-600 text-yellow-600 hover:bg-yellow-50">
+              6 أشهر
+            </Button>
+            <Button variant="outline" className="border-yellow-600 text-yellow-600 hover:bg-yellow-50">
+              3 أشهر
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              شهر واحد
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Price Level Tabs */}
       <div className="flex gap-2 mb-6">
+        <Button className="bg-green-600 hover:bg-green-700 text-white">
+          <Plus className="w-4 h-4 ml-2" />
+          إضافة مقياس
+        </Button>
         {priceLevels.map((level) => (
           <Button
             key={level.id}
             variant={selectedLevel === level.level ? "default" : "outline"}
             onClick={() => setSelectedLevel(level.level)}
             className={selectedLevel === level.level 
-              ? "bg-yellow-600 hover:bg-yellow-700 text-white" 
-              : "border-yellow-600 text-yellow-600 hover:bg-yellow-50"
+              ? "bg-orange-500 hover:bg-orange-600 text-white" 
+              : "border-orange-500 text-orange-600 hover:bg-orange-50"
             }
           >
-            {level.name}
+            مستوى {level.level}
           </Button>
         ))}
       </div>
 
       {currentLevel && (
         <div className="space-y-6">
-          {/* Price Level Editor */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
+          {/* Price Level Header */}
+          <div className="bg-gradient-to-r from-orange-100 to-yellow-100 dark:from-orange-900/20 dark:to-yellow-900/20 rounded-2xl p-6 border border-orange-500/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <DollarSign className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-orange-800 dark:text-orange-300">
+                    {currentLevel.name}
+                  </h3>
+                  <p className="text-orange-600 dark:text-orange-400">
+                    الأسعار حسب الفئة المختارة - شهرياً
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Price Table */}
+          <Card className="border-0 shadow-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-yellow-800 dark:text-yellow-300">
-                {currentLevel.name}
+              <CardTitle className="text-orange-800 dark:text-orange-300 flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                أسعار الأحجام حسب فئة العميل - شهرياً
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                {/* Size-based Pricing Table */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                    الأسعار حسب الحجم وفئة العميل
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>الحجم</TableHead>
-                          <TableHead>المسوقين</TableHead>
-                          <TableHead>الشركات</TableHead>
-                          <TableHead>الأفراد</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {Object.entries(currentLevel.sizes).map(([size, prices]) => (
-                          <TableRow key={size}>
-                            <TableCell className="font-medium">{size}</TableCell>
-                            {Object.entries(prices).map(([category, price]) => (
-                              <TableCell key={category}>
-                                {editingPrice?.levelId === currentLevel.id && 
-                                 editingPrice?.size === size && 
-                                 editingPrice?.category === category ? (
-                                  <div className="flex items-center gap-2">
-                                    <Input
-                                      type="number"
-                                      value={editingPrice.value}
-                                      onChange={(e) => setEditingPrice({
-                                        ...editingPrice,
-                                        value: Number(e.target.value)
-                                      })}
-                                      className="w-24"
-                                    />
-                                    <Button
-                                      size="sm"
-                                      onClick={() => {
-                                        updatePrice(currentLevel.id, size, category, editingPrice.value)
-                                        setEditingPrice(null)
-                                      }}
-                                    >
-                                      <Save className="w-3 h-3" />
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => setEditingPrice(null)}
-                                    >
-                                      <X className="w-3 h-3" />
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-yellow-600">
-                                      {price.toLocaleString()} د.ل
-                                    </span>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={() => setEditingPrice({
-                                        levelId: currentLevel.id,
-                                        size,
-                                        category,
-                                        value: price
-                                      })}
-                                    >
-                                      <Edit className="w-3 h-3" />
-                                    </Button>
-                                  </div>
-                                )}
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20">
+                      <TableHead className="font-bold text-orange-800 dark:text-orange-300 text-center">الحجم</TableHead>
+                      <TableHead className="font-bold text-blue-800 dark:text-blue-300 text-center">مسوقين</TableHead>
+                      <TableHead className="font-bold text-green-800 dark:text-green-300 text-center">شركات</TableHead>
+                      <TableHead className="font-bold text-purple-800 dark:text-purple-300 text-center">أفراد</TableHead>
+                      <TableHead className="font-bold text-red-800 dark:text-red-300 text-center">إجراءات</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {Object.entries(currentLevel.sizes).map(([size, prices]) => (
+                      <TableRow key={size} className="hover:bg-orange-50/50 dark:hover:bg-orange-900/10">
+                        <TableCell className="font-bold text-center bg-yellow-50 dark:bg-yellow-900/20">
+                          {size}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {editingPrice?.levelId === currentLevel.id && 
+                           editingPrice?.size === size && 
+                           editingPrice?.category === 'marketers' ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <Input
+                                type="number"
+                                value={editingPrice.value}
+                                onChange={(e) => setEditingPrice({
+                                  ...editingPrice,
+                                  value: Number(e.target.value)
+                                })}
+                                className="w-24 text-center"
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  updatePrice(currentLevel.id, size, 'marketers', editingPrice.value)
+                                  setEditingPrice(null)
+                                }}
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                <Save className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingPrice(null)}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center gap-2">
+                              <span className="font-bold text-blue-600 dark:text-blue-400">
+                                د.ل {prices.marketers.toLocaleString()}
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setEditingPrice({
+                                  levelId: currentLevel.id,
+                                  size,
+                                  category: 'marketers',
+                                  value: prices.marketers
+                                })}
+                                className="hover:bg-blue-100"
+                              >
+                                <Edit className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {editingPrice?.levelId === currentLevel.id && 
+                           editingPrice?.size === size && 
+                           editingPrice?.category === 'companies' ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <Input
+                                type="number"
+                                value={editingPrice.value}
+                                onChange={(e) => setEditingPrice({
+                                  ...editingPrice,
+                                  value: Number(e.target.value)
+                                })}
+                                className="w-24 text-center"
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  updatePrice(currentLevel.id, size, 'companies', editingPrice.value)
+                                  setEditingPrice(null)
+                                }}
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                <Save className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingPrice(null)}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center gap-2">
+                              <span className="font-bold text-green-600 dark:text-green-400">
+                                د.ل {prices.companies.toLocaleString()}
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setEditingPrice({
+                                  levelId: currentLevel.id,
+                                  size,
+                                  category: 'companies',
+                                  value: prices.companies
+                                })}
+                                className="hover:bg-green-100"
+                              >
+                                <Edit className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {editingPrice?.levelId === currentLevel.id && 
+                           editingPrice?.size === size && 
+                           editingPrice?.category === 'individuals' ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <Input
+                                type="number"
+                                value={editingPrice.value}
+                                onChange={(e) => setEditingPrice({
+                                  ...editingPrice,
+                                  value: Number(e.target.value)
+                                })}
+                                className="w-24 text-center"
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  updatePrice(currentLevel.id, size, 'individuals', editingPrice.value)
+                                  setEditingPrice(null)
+                                }}
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                <Save className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingPrice(null)}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center gap-2">
+                              <span className="font-bold text-purple-600 dark:text-purple-400">
+                                د.ل {prices.individuals.toLocaleString()}
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setEditingPrice({
+                                  levelId: currentLevel.id,
+                                  size,
+                                  category: 'individuals',
+                                  value: prices.individuals
+                                })}
+                                className="hover:bg-purple-100"
+                              >
+                                <Edit className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="hover:bg-red-100 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
 
                 {/* City Multipliers Table */}
                 <div>
