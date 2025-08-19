@@ -1,0 +1,1 @@
+export const DEFAULT_IMAGE_URL = "https://drive.google.com/uc?export=view&id=13yTnaEWp2tFSxCmg8AuXH1e9QvPNMYWq"
