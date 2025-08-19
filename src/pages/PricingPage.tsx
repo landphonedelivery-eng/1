@@ -449,163 +449,81 @@ export const PricingPage: React.FC = () => {
             </CardContent>
           </Card>
 
-                {/* City Multipliers Table */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                    معاملات المدن
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {Object.entries(currentLevel.cities).map(([city, data]) => (
-                      <Card key={city} className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">{city}</h4>
-                          <Badge variant={data.multiplier >= 1.0 ? "default" : "secondary"}>
-                            {(data.multiplier * 100).toFixed(0)}%
-                          </Badge>
-                        </div>
-                        {editingMultiplier?.levelId === currentLevel.id && 
-                         editingMultiplier?.city === city ? (
-                          <div className="flex items-center gap-2">
-                            <Input
-                              type="number"
-                              step="0.1"
-                              value={editingMultiplier.value}
-                              onChange={(e) => setEditingMultiplier({
-                                ...editingMultiplier,
-                                value: Number(e.target.value)
-                              })}
-                              className="w-20"
-                            />
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                updateCityMultiplier(currentLevel.id, city, editingMultiplier.value)
-                                setEditingMultiplier(null)
-                              }}
-                            >
-                              <Save className="w-3 h-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setEditingMultiplier(null)}
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600">
-                              معامل: {data.multiplier}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setEditingMultiplier({
-                                levelId: currentLevel.id,
-                                city,
-                                value: data.multiplier
-                              })}
-                            >
-                              <Edit className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        )}
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Customer Categories */}
-          <Card className="border-0 shadow-lg">
+          {/* City Multipliers */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20">
             <CardHeader>
-              <CardTitle className="text-gray-800 dark:text-gray-200">
-                فئات العملاء والخصومات
+              <CardTitle className="text-green-800 dark:text-green-300">
+                معاملات المدن
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {customerCategories.map((category) => (
-                  <Card key={category.id} className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium text-gray-800 dark:text-gray-200">
-                          {category.name}
-                        </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {category.type}
-                        </p>
-                      </div>
-                      <Badge variant={category.discountPercentage > 0 ? "default" : "secondary"}>
-                        {category.discountPercentage > 0 ? `خصم ${category.discountPercentage}%` : 'بدون خصم'}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {Object.entries(currentLevel.cities).map(([city, data]) => (
+                  <Card key={city} className="p-4 bg-white/80 dark:bg-gray-800/80">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-gray-900 dark:text-white">{city}</h4>
+                      <Badge className={`font-bold ${
+                        data.multiplier >= 1.0 
+                          ? 'bg-green-100 text-green-800 border-green-200'
+                          : data.multiplier >= 0.8
+                          ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                          : 'bg-red-100 text-red-800 border-red-200'
+                      }`}>
+                        {(data.multiplier * 100).toFixed(0)}%
                       </Badge>
                     </div>
+                    {editingMultiplier?.levelId === currentLevel.id && 
+                     editingMultiplier?.city === city ? (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={editingMultiplier.value}
+                          onChange={(e) => setEditingMultiplier({
+                            ...editingMultiplier,
+                            value: Number(e.target.value)
+                          })}
+                          className="w-20 text-center"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            updateCityMultiplier(currentLevel.id, city, editingMultiplier.value)
+                            setEditingMultiplier(null)
+                          }}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          <Save className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingMultiplier(null)}
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          معامل: {data.multiplier}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setEditingMultiplier({
+                            levelId: currentLevel.id,
+                            city,
+                            value: data.multiplier
+                          })}
+                          className="hover:bg-green-100"
+                        >
+                          <Edit className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    )}
                   </Card>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Price Calculator */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-            <CardHeader>
-              <CardTitle className="text-blue-800 dark:text-blue-300">
-                حاسبة الأسعار
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>الحجم</Label>
-                  <Select defaultValue="13×5">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.keys(currentLevel.sizes).map((size) => (
-                        <SelectItem key={size} value={size}>{size}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>المدينة</Label>
-                  <Select defaultValue="طرابلس">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.keys(currentLevel.cities).map((city) => (
-                        <SelectItem key={city} value={city}>{city}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>فئة العميل</Label>
-                  <Select defaultValue="companies">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="marketers">مسوقين</SelectItem>
-                      <SelectItem value="companies">شركات</SelectItem>
-                      <SelectItem value="individuals">أفراد</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">السعر المحسوب</p>
-                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    {getPrice("13×5", "طرابلس", "companies", selectedLevel).toLocaleString()} د.ل
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">شهرياً</p>
-                </div>
               </div>
             </CardContent>
           </Card>
