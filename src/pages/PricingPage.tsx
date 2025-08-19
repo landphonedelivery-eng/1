@@ -532,3 +532,5 @@ export const PricingPage: React.FC = () => {
     </div>
   )
 }
+
+export default PricingPage

@@ -345,8 +345,8 @@ export const BillboardsPage: React.FC = () => {
           </Card>
         ))}
       </div>
-
-
     </div>
   )
 }
+
+export default BillboardsPage

@@ -551,3 +551,5 @@ export const InstallationTasksPage: React.FC = () => {
     </div>
   )
 }
+
+export default InstallationTasksPage
