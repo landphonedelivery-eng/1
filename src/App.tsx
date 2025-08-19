@@ -9,6 +9,7 @@ import { CustomersPage } from './pages/CustomersPage'
 import { PricingPage } from './pages/PricingPage'
 import { BillboardsPage } from './pages/BillboardsPage'
 import { InstallationTasksPage } from './pages/InstallationTasksPage'
+import { AdvancedBookingPage } from './pages/AdvancedBookingPage'
 import { Button } from './components/ui/button'
 import { 
   Home, 
@@ -293,17 +294,7 @@ function AppContent() {
             </div>
           )}
 
-          {activeTab === 'advanced-booking' && (
-            <div className="space-y-8">
-              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
-                  حجز جديد
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300 text-lg">إنشاء حجز جديد للوحات الإعلانية</p>
-              </div>
-              <div className="text-center py-12 text-gray-500">صفحة الحجز الجديد قيد التطوير</div>
-            </div>
-          )}
+          {activeTab === 'advanced-booking' && <AdvancedBookingPage />}
 
           {activeTab === 'bookings' && (
             <div className="space-y-8">
