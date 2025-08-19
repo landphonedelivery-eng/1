@@ -5,7 +5,8 @@ import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
 import { Badge } from '../components/ui/badge'
-import { Plus, Edit, Trash2, DollarSign } from 'lucide-react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table'
+import { Plus, Edit, Trash2, DollarSign, Save, X } from 'lucide-react'
 
 interface PriceLevel {
   id: string
@@ -25,46 +26,80 @@ interface PriceLevel {
   }
 }
 
+interface CustomerCategory {
+  id: string
+  name: string
+  type: "marketer" | "company" | "individual"
+  discountPercentage: number
+}
+
 export const PricingPage: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<"A" | "B">("A")
+  const [editingPrice, setEditingPrice] = useState<{
+    levelId: string
+    size: string
+    category: string
+    value: number
+  } | null>(null)
+  const [editingMultiplier, setEditingMultiplier] = useState<{
+    levelId: string
+    city: string
+    value: number
+  } | null>(null)
   
-  // Mock data for price levels
-  const priceLevels: PriceLevel[] = [
+  // Data matching the original code structure
+  const [priceLevels, setPriceLevels] = useState<PriceLevel[]>([
     {
-      id: "1",
-      name: "المستوى الأول",
+      id: "level-a",
+      name: "المستوى أ - مواقع مميزة",
       level: "A",
       sizes: {
-        "4x3": { marketers: 800, companies: 1000, individuals: 1200 },
-        "6x4": { marketers: 1200, companies: 1500, individuals: 1800 },
-        "8x6": { marketers: 1800, companies: 2200, individuals: 2600 },
-        "10x8": { marketers: 2500, companies: 3000, individuals: 3500 }
+        "13×5": { marketers: 4500, companies: 4000, individuals: 3500 },
+        "12×4": { marketers: 3800, companies: 3300, individuals: 2800 },
+        "10×4": { marketers: 3200, companies: 2700, individuals: 2200 },
+        "8×3": { marketers: 2500, companies: 2000, individuals: 1500 },
+        "6×3": { marketers: 2000, companies: 1500, individuals: 1000 },
+        "4×3": { marketers: 1500, companies: 1000, individuals: 800 },
       },
       cities: {
-        "طرابلس": { multiplier: 1.0 },
-        "بنغازي": { multiplier: 0.8 },
-        "مصراتة": { multiplier: 0.7 },
-        "الزاوية": { multiplier: 0.6 }
-      }
+        طرابلس: { multiplier: 1.2 },
+        بنغازي: { multiplier: 1.0 },
+        مصراته: { multiplier: 0.9 },
+        زليتن: { multiplier: 0.8 },
+        الخمس: { multiplier: 0.7 },
+        الزاوية: { multiplier: 0.8 },
+        صبراته: { multiplier: 0.7 },
+      },
     },
     {
-      id: "2", 
-      name: "المستوى الثاني",
+      id: "level-b",
+      name: "المستوى ب - مواقع عادية",
       level: "B",
       sizes: {
-        "4x3": { marketers: 600, companies: 750, individuals: 900 },
-        "6x4": { marketers: 900, companies: 1125, individuals: 1350 },
-        "8x6": { marketers: 1350, companies: 1650, individuals: 1950 },
-        "10x8": { marketers: 1875, companies: 2250, individuals: 2625 }
+        "13×5": { marketers: 3500, companies: 3000, individuals: 2500 },
+        "12×4": { marketers: 2800, companies: 2300, individuals: 1800 },
+        "10×4": { marketers: 2200, companies: 1700, individuals: 1200 },
+        "8×3": { marketers: 1800, companies: 1300, individuals: 1000 },
+        "6×3": { marketers: 1500, companies: 1000, individuals: 700 },
+        "4×3": { marketers: 1200, companies: 800, individuals: 500 },
       },
       cities: {
-        "طرابلس": { multiplier: 1.0 },
-        "بنغازي": { multiplier: 0.8 },
-        "مصراتة": { multiplier: 0.7 },
-        "الزاوية": { multiplier: 0.6 }
-      }
-    }
-  ]
+        طرابلس: { multiplier: 1.2 },
+        بنغازي: { multiplier: 1.0 },
+        مصراته: { multiplier: 0.9 },
+        زليتن: { multiplier: 0.8 },
+        الخمس: { multiplier: 0.7 },
+        الزاوية: { multiplier: 0.8 },
+        صبراته: { multiplier: 0.7 },
+      },
+    },
+  ])
+
+  const [customerCategories] = useState<CustomerCategory[]>([
+    { id: "1", name: "مسوقين", type: "marketer", discountPercentage: 15 },
+    { id: "2", name: "شركات", type: "company", discountPercentage: 10 },
+    { id: "3", name: "أفراد", type: "individual", discountPercentage: 0 },
+  ])
 
   const currentLevel = priceLevels.find(level => level.level === selectedLevel)
 
@@ -86,144 +121,344 @@ export const PricingPage: React.FC = () => {
     return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200'
   }
 
+  const updatePrice = (levelId: string, size: string, category: string, newPrice: number) => {
+    setPriceLevels((prev) =>
+      prev.map((level) => {
+        if (level.id === levelId) {
+          return {
+            ...level,
+            sizes: {
+              ...level.sizes,
+              [size]: {
+                ...level.sizes[size],
+                [category]: newPrice,
+              },
+            },
+          }
+        }
+        return level
+      }),
+    )
+  }
+
+  const updateCityMultiplier = (levelId: string, city: string, newMultiplier: number) => {
+    setPriceLevels((prev) =>
+      prev.map((level) => {
+        if (level.id === levelId) {
+          return {
+            ...level,
+            cities: {
+              ...level.cities,
+              [city]: { multiplier: newMultiplier },
+            },
+          }
+        }
+        return level
+      }),
+    )
+  }
+
+  const getPrice = (
+    size: string,
+    city: string,
+    customerType: "marketers" | "companies" | "individuals",
+    level: "A" | "B" = "A",
+  ) => {
+    const priceLevel = priceLevels.find((p) => p.level === level)
+    if (!priceLevel) return 2000
+
+    const sizePrice = priceLevel.sizes[size]?.[customerType] || 2000
+    const cityMultiplier = priceLevel.cities[city]?.multiplier || 1.0
+
+    return Math.round(sizePrice * cityMultiplier)
+  }
+
   return (
-    <div className="space-y-8">
-      <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-2">
-              إدارة الأسعار
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 text-lg">تحديد أسعار اللوحات حسب الحجم والموقع وفئة العميل</p>
-          </div>
-          <Button className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
-            <Plus className="h-4 w-4 mr-2" />
-            إضافة مستوى سعر جديد
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+            إدارة الأسعار
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">تحديد أسعار اللوحات حسب الحجم والموقع وفئة العميل</p>
+        </div>
+        <div className="flex gap-3">
+          <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
+            <Plus className="w-4 h-4 ml-2" />
+            إضافة مستوى سعر
           </Button>
         </div>
       </div>
 
-      {/* Price Level Selector */}
-      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl border border-yellow-500/20 p-6 shadow-lg">
-        <div className="flex items-center gap-4 mb-6">
-          <Label className="text-lg font-semibold text-gray-900 dark:text-white">اختر مستوى السعر:</Label>
-          <Select value={selectedLevel} onValueChange={(value: "A" | "B") => setSelectedLevel(value)}>
-            <SelectTrigger className="w-[200px] border-yellow-500/30 focus:border-yellow-500">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="A">المستوى الأول (A)</SelectItem>
-              <SelectItem value="B">المستوى الثاني (B)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {currentLevel && (
-          <div className="space-y-6">
-            {/* Size-based Pricing */}
-            <div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-4">
-                الأسعار حسب الحجم وفئة العميل
-              </h3>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {Object.entries(currentLevel.sizes).map(([size, prices]) => (
-                  <Card key={size} className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-yellow-500/20 shadow-lg hover:shadow-xl transition-all duration-200">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-center text-lg font-bold text-gray-900 dark:text-white">
-                        {size} متر
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {Object.entries(prices).map(([category, price]) => (
-                        <div key={category} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-                          <Badge className={`${getCategoryColor(category)} font-medium`}>
-                            {getCategoryLabel(category)}
-                          </Badge>
-                          <div className="flex items-center gap-1">
-                            <DollarSign className="h-4 w-4 text-yellow-600" />
-                            <span className="font-bold text-yellow-600 dark:text-yellow-400">
-                              {price.toLocaleString()} د.ل
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* City Multipliers */}
-            <div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-4">
-                معاملات المدن
-              </h3>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {Object.entries(currentLevel.cities).map(([city, data]) => (
-                  <Card key={city} className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-yellow-500/20 shadow-lg hover:shadow-xl transition-all duration-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-gray-900 dark:text-white">{city}</h4>
-                        <Badge className={`font-bold ${
-                          data.multiplier >= 1.0 
-                            ? 'bg-green-100 text-green-800 border-green-200'
-                            : data.multiplier >= 0.8
-                            ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
-                            : 'bg-red-100 text-red-800 border-red-200'
-                        }`}>
-                          {(data.multiplier * 100).toFixed(0)}%
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        معامل الضرب: {data.multiplier}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Price Calculator Example */}
-            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-2xl p-6 border border-yellow-500/20">
-              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 dark:from-white dark:to-yellow-400 bg-clip-text text-transparent mb-4">
-                مثال على حساب السعر
-              </h3>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 border border-yellow-500/20">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">لوحة 6x4 متر</p>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">للشركات في طرابلس</p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-yellow-600" />
-                    <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                      {currentLevel.sizes["6x4"]?.companies.toLocaleString()} د.ل
-                    </span>
-                  </div>
-                </div>
-                <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 border border-yellow-500/20">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">نفس اللوحة</p>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">للشركات في بنغازي</p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-yellow-600" />
-                    <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                      {Math.round((currentLevel.sizes["6x4"]?.companies || 0) * (currentLevel.cities["بنغازي"]?.multiplier || 1)).toLocaleString()} د.ل
-                    </span>
-                  </div>
-                </div>
-                <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 border border-yellow-500/20">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">الفرق في السعر</p>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">توفير</p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    <span className="text-2xl font-bold text-green-600">
-                      {Math.round((currentLevel.sizes["6x4"]?.companies || 0) * (1 - (currentLevel.cities["بنغازي"]?.multiplier || 1))).toLocaleString()} د.ل
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+      {/* Price Level Tabs */}
+      <div className="flex gap-2 mb-6">
+        {priceLevels.map((level) => (
+          <Button
+            key={level.id}
+            variant={selectedLevel === level.level ? "default" : "outline"}
+            onClick={() => setSelectedLevel(level.level)}
+            className={selectedLevel === level.level 
+              ? "bg-yellow-600 hover:bg-yellow-700 text-white" 
+              : "border-yellow-600 text-yellow-600 hover:bg-yellow-50"
+            }
+          >
+            {level.name}
+          </Button>
+        ))}
       </div>
+
+      {currentLevel && (
+        <div className="space-y-6">
+          {/* Price Level Editor */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
+            <CardHeader>
+              <CardTitle className="text-yellow-800 dark:text-yellow-300">
+                {currentLevel.name}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Size-based Pricing Table */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                    الأسعار حسب الحجم وفئة العميل
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>الحجم</TableHead>
+                          <TableHead>المسوقين</TableHead>
+                          <TableHead>الشركات</TableHead>
+                          <TableHead>الأفراد</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {Object.entries(currentLevel.sizes).map(([size, prices]) => (
+                          <TableRow key={size}>
+                            <TableCell className="font-medium">{size}</TableCell>
+                            {Object.entries(prices).map(([category, price]) => (
+                              <TableCell key={category}>
+                                {editingPrice?.levelId === currentLevel.id && 
+                                 editingPrice?.size === size && 
+                                 editingPrice?.category === category ? (
+                                  <div className="flex items-center gap-2">
+                                    <Input
+                                      type="number"
+                                      value={editingPrice.value}
+                                      onChange={(e) => setEditingPrice({
+                                        ...editingPrice,
+                                        value: Number(e.target.value)
+                                      })}
+                                      className="w-24"
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={() => {
+                                        updatePrice(currentLevel.id, size, category, editingPrice.value)
+                                        setEditingPrice(null)
+                                      }}
+                                    >
+                                      <Save className="w-3 h-3" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => setEditingPrice(null)}
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-yellow-600">
+                                      {price.toLocaleString()} د.ل
+                                    </span>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => setEditingPrice({
+                                        levelId: currentLevel.id,
+                                        size,
+                                        category,
+                                        value: price
+                                      })}
+                                    >
+                                      <Edit className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                )}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+
+                {/* City Multipliers Table */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                    معاملات المدن
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {Object.entries(currentLevel.cities).map(([city, data]) => (
+                      <Card key={city} className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium">{city}</h4>
+                          <Badge variant={data.multiplier >= 1.0 ? "default" : "secondary"}>
+                            {(data.multiplier * 100).toFixed(0)}%
+                          </Badge>
+                        </div>
+                        {editingMultiplier?.levelId === currentLevel.id && 
+                         editingMultiplier?.city === city ? (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              step="0.1"
+                              value={editingMultiplier.value}
+                              onChange={(e) => setEditingMultiplier({
+                                ...editingMultiplier,
+                                value: Number(e.target.value)
+                              })}
+                              className="w-20"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                updateCityMultiplier(currentLevel.id, city, editingMultiplier.value)
+                                setEditingMultiplier(null)
+                              }}
+                            >
+                              <Save className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingMultiplier(null)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-600">
+                              معامل: {data.multiplier}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setEditingMultiplier({
+                                levelId: currentLevel.id,
+                                city,
+                                value: data.multiplier
+                              })}
+                            >
+                              <Edit className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        )}
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Customer Categories */}
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-gray-800 dark:text-gray-200">
+                فئات العملاء والخصومات
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {customerCategories.map((category) => (
+                  <Card key={category.id} className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-gray-800 dark:text-gray-200">
+                          {category.name}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {category.type}
+                        </p>
+                      </div>
+                      <Badge variant={category.discountPercentage > 0 ? "default" : "secondary"}>
+                        {category.discountPercentage > 0 ? `خصم ${category.discountPercentage}%` : 'بدون خصم'}
+                      </Badge>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Price Calculator */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+            <CardHeader>
+              <CardTitle className="text-blue-800 dark:text-blue-300">
+                حاسبة الأسعار
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>الحجم</Label>
+                  <Select defaultValue="13×5">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.keys(currentLevel.sizes).map((size) => (
+                        <SelectItem key={size} value={size}>{size}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>المدينة</Label>
+                  <Select defaultValue="طرابلس">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.keys(currentLevel.cities).map((city) => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>فئة العميل</Label>
+                  <Select defaultValue="companies">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="marketers">مسوقين</SelectItem>
+                      <SelectItem value="companies">شركات</SelectItem>
+                      <SelectItem value="individuals">أفراد</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">السعر المحسوب</p>
+                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    {getPrice("13×5", "طرابلس", "companies", selectedLevel).toLocaleString()} د.ل
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">شهرياً</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }
