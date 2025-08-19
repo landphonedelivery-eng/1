@@ -4,11 +4,55 @@ import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
 import { Plus, Search } from 'lucide-react'
-import { useCustomers } from '../hooks/useCustomers'
 import { Customer } from '../types'
 
 export const CustomersPage: React.FC = () => {
-  const { customers, deleteCustomer } = useCustomers()
+  // Mock data for customers
+  const [customers] = useState<Customer[]>([
+    {
+      id: "1",
+      name: "محمد علي الحولة",
+      phone: "+218 91-1234567",
+      email: "mohamed.alhawla@example.com",
+      company: "شركة جوتن للطلاء",
+      category: "company",
+      status: "active",
+      totalSpent: 86400,
+      contractsCount: 2,
+      createdAt: "2024-01-15",
+      address: "طرابلس، ليبيا"
+    },
+    {
+      id: "2", 
+      name: "علي عمار",
+      phone: "+218 92-7654321",
+      email: "ali.ammar@example.com",
+      company: "مؤسسة النور التجارية",
+      category: "company",
+      status: "active",
+      totalSpent: 132000,
+      contractsCount: 3,
+      createdAt: "2024-01-10",
+      address: "بنغازي، ليبيا"
+    },
+    {
+      id: "3",
+      name: "فاطمة الزهراء",
+      phone: "+218 93-9876543",
+      email: "fatima.zahra@example.com",
+      company: "شركة الأمل للتسويق",
+      category: "marketer",
+      status: "active",
+      totalSpent: 45600,
+      contractsCount: 1,
+      createdAt: "2024-01-20",
+      address: "مصراتة، ليبيا"
+    }
+  ])
+
+  const deleteCustomer = (id: string) => {
+    console.log('Delete customer:', id)
+  }
   const [searchFilter, setSearchFilter] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
