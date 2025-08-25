@@ -1,0 +1,49 @@
+
+> my-v0-project@0.1.0 dev
+> next dev --port 12000 --hostname 0.0.0.0
+
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:12000
+   - Network:      http://0.0.0.0:12000
+
+ ✓ Starting...
+ ✓ Ready in 1393ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.8s (953 modules)
+ GET / 200 in 5099ms
+ GET / 200 in 37ms
+ ⚠ Cross origin request detected from work-1-mthmcnxtuqpbqqyp.prod-runtime.all-hands.dev to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 560ms (948 modules)
+ GET /api/placeholder/400/200 404 in 642ms
+ GET / 200 in 21ms
+ GET / 200 in 121ms
+ GET / 200 in 30ms
+ ✓ Compiled in 491ms (460 modules)
+ GET / 200 in 18ms
+ GET / 200 in 15ms
+ ✓ Compiled in 591ms (944 modules)
+ GET / 200 in 83ms
+ ⨯ ./src/pages/AdvancedBookingPage.tsx
+Error:   [31mx[0m Expected ',', got 'ntPage'
+    ,-[[36;1;4m/workspace/project/1/src/pages/AdvancedBookingPage.tsx[0m:49:1]
+ [2m46[0m |   const [bookingDuration, setBookingDuration] = useState(334)
+ [2m47[0m |   const [notes, setNotes] = useState('')
+ [2m48[0m |   const [searchTerm, setSearchTerm] = useState('')
+ [2m49[0m |   const [currentPage, setCurre ntPage] = useState(1)
+    : [35;1m                               ^^^^^^[0m
+ [2m50[0m | 
+ [2m51[0m |   const [selectedBillboards, setSelectedBillboards] = useState<SelectedBillboard[]>([
+ [2m52[0m |     {
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/pages/AdvancedBookingPage.tsx
+./src/App.tsx
+./app/page.tsx
+ ✓ Compiled in 741ms (950 modules)
+ GET / 200 in 78ms

@@ -1,5 +1,0 @@
-export * from './mockUsers'
-export * from './mockCustomers'
-export * from './mockPriceLevels'
-export * from './mockBillboards'
-export * from './mockBookings'

@@ -170,9 +170,9 @@ export const NewProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 5. فتح Pull Request
 
 ## الملفات المهمة
-- `REFACTORING_GUIDE.md`: دليل شامل للهيكل الجديد
-- `REFACTORING_SUMMARY.md`: ملخص التغييرات المنجزة
-- `app/page-backup.tsx`: نسخة احتياطية من الملف الأصلي
+- `README.md`: دليل شامل للمشروع والهيكل الجديد
+- `src/`: المجلد الرئيسي للكود المنظم
+- `app/page.tsx`: نقطة الدخول المبسطة للتطبيق
 
 ## الترخيص
 هذا المشروع مرخص تحت رخصة MIT.
